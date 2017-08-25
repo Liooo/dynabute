@@ -1,0 +1,5 @@
+require('dynabute/values/base')
+require('dynabute/values/boolean_value')
+require('dynabute/values/datetime_value')
+require('dynabute/values/integer_value')
+require('dynabute/values/string_value')
