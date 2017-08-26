@@ -4,8 +4,7 @@ require 'dynabute/joins'
 module Dynabute
   class Field < ActiveRecord::Base
     include Joins::Field
-    def self.table_name_prefix; 'dynabute_'; end
-
+    def self.table_name_prefix; Util.table_name_prefix; end
     TYPES = %w(string integer boolean datetime select)
     validates :value_type, inclusion: {in: TYPES}
     scope :for, ->(klass){ where(target_model: klass) }
