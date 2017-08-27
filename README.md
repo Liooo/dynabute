@@ -14,30 +14,32 @@ then add some field definitions
 ```ruby
 User.dynabutes << Dynabute::Field.new( name: 'age', value_type: 'integer' )
 User.dynabutes << Dynabute::Field.new( name: 'skinny', value_type: 'boolean' )
-User.dynabutes << Dynabute::Field.new( name: 'personality', value_type: 'string', has_many: true )
+User.dynabutes << Dynabute::Field.new( name: 'personalities', value_type: 'string', has_many: true )
 ```
 
 now set value
 ```ruby
 user = User.create
 
-user.build_dynabute_value( name: 'age' )
-# => <Dynabute::Values::IntegerValue:0x007faba5279540 id: nil, field_id: 1, dynabutable_id: 1, dynabutable_type: "User", value: nil>
+user.build_dynabute_value( name: 'age', value: 35 ).save
+# => <Dynabute::Values::IntegerValue:0x007faba5279540 id: 1, field_id: 1, dynabutable_id: 1, dynabutable_type: "User", value: 35>
+```
 
-user.build_dynabute_value( name: 'age' ).update( value: 35 )
+check the value
+```ruby
 user.dynabute_value( name: 'age' ).value
-#=> 35
+# => 35
 ```
 
 values can also be referenced by `dynabute_<field name>_value(s)`
 ```ruby
-user.dynabute_age_value
-# => <Dynabute::Values::IntegerValue:0x007faba5279540 id: 1, field_id: 1, dynabutable_id: 1, dynabutable_type: "User", value: 35>
+user.dynabute_age_value.value
+# => 35
 ```
 
 nested attributes of glory
 ```ruby
-personality_field_id = User.dynabutes.find_by( name: 'personality' ).id
+personality_field_id = User.dynabutes.find_by( name: 'personalities' ).id
 user.update(
   dynabute_values_attributes: [
     { name: 'age', value: 36 }, #=> tell us which field to update by `name:`
@@ -48,13 +50,39 @@ user.update(
 )
 ```
 
-check all dynabute values
+`select` value_type is also available 
 ```ruby
-user.dynabute_values
-#=> [#<Dynabute::Values::IntegerValue:0x007ff4230e90d8 id: 1, field_id: 1, dynabutable_id: 1, dynabutable_type: "User", value: 36>,
-     #<Dynabute::Values::BooleanValue:0x007fd03ecb84f8 id: 1, field_id: 2, dynabutable_id: 1, dynabutable_type: "User", value: false>,
-     #<Dynabute::Values::StringValue:0x007fd03b347ef8 id: 1, field_id: 3, dynabutable_id: 1, dynabutable_type: "User", value: "introverted">,
-     #<Dynabute::Values::StringValue:0x007fd03e992080 id: 1, field_id: 3, dynabutable_id: 1, dynabutable_type: "User", value: "stingy">]
+User.dynabutes << Dynabute::Field.new( name: 'gender', value_type: 'select', options_attributes: [ { label: 'male' }, { label: 'female' } ] )
+User.dynabutes << Dynabute::Field.new( name: 'hobbies', has_many: true, value_type: 'select',  options_attributes: [ { label: 'running' }, { label: 'swimming' }, { label: 'hiking' } ] )
+```
+
+list the available options for a field 
+```ruby
+User.dynabutes.find_by(name: gender).options
+# => [#<Dynabute::Option:0x007ff53e2e1f90 id: 1, field_id: 4, label: "male">,
+#     #<Dynabute::Option:0x007ff53e2e1568 id: 2, field_id: 4, label: "female">]
+```
+
+set value
+```ruby
+male = User.dynabutes.find_by(name: 'gender').options.find_by(label: 'male')
+hobbies = User.dynabutes.find_by(name: 'hobbies').options
+
+user.update(dynabute_values_attributes: [
+ { name: 'gender', value: male.id },
+ { name: 'hobbies', value: hobbies[0].id },
+ { name: 'hobbies', value: hobbies[1].id }
+])
+```
+ 
+check out the selected options
+```ruby
+user.dynabute_value(name: 'gender').option
+# => <Dynabute::Option:0x007ff53e2e1f90 id: 1, field_id: 4, label: "male">,
+
+user.dynabute_value(name: 'hobbies').map(&:option)
+# => [#<Dynabute::Option:0x007fb26c4467d8 id: 5, field_id: 5, label: "running">,
+#     #<Dynabute::Option:0x007fb26c446238 id: 6, field_id: 5, label: "swimming">]
 ```
  
 ## Installation

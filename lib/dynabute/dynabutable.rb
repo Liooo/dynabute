@@ -29,8 +29,8 @@ module Dynabute
 
       def dynabute_values
         @dynabute_values ||= dynabute_fields
-                               .group_by{|f| f.value_type}
-                               .map { |type, fields|
+                               .group_by{|f| f.value_type }
+                               .map { |_, fields|
                                  fields.first.value_class.where(field_id: fields.map(&:id), dynabutable_id: id)
                                }.flatten.compact
       end
@@ -45,9 +45,9 @@ module Dynabute
         end
       end
 
-      def build_dynabute_value(name: nil, id: nil, field: nil)
+      def build_dynabute_value(name: nil, id: nil, field: nil, **rest)
         field = find_field(name, id, field)
-        send(Util.value_relation_name(field.value_type)).build(field_id: field.id)
+        send(Util.value_relation_name(field.value_type)).build(field_id: field.id, **rest)
       end
 
       def method_missing(*args)

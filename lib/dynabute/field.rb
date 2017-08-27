@@ -4,20 +4,18 @@ require 'dynabute/joins'
 module Dynabute
   class Field < ActiveRecord::Base
     include Joins::Field
-    def self.table_name_prefix; 'dynabute_'; end
-
+    def self.table_name_prefix; Util.table_name_prefix; end
     TYPES = %w(string integer boolean datetime select)
     validates :value_type, inclusion: {in: TYPES}
-    scope :for, ->(klass){ where(target_model: klass) }
+    validates :name, presence: true, uniqueness: { scope: :target_model }
+    validates_presence_of :target_model
     has_many :options, class_name: 'Dynabute::Option', dependent: :destroy
     accepts_nested_attributes_for :options, allow_destroy: true
-    def is_select?
-      ['select'].include? value_type
-    end
+
+    scope :for, ->(klass){ where(target_model: klass) }
 
     def value_class
-      type = is_select? ? :integer : value_type
-      Util.value_class_name(type).safe_constantize
+      Util.value_class_name(value_type).safe_constantize
     end
 
     def self.<<(records)
