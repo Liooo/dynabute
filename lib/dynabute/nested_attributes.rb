@@ -15,6 +15,7 @@ module Dynabute
         collect_fields(@attributes_list)
         @attributes_list.each do |attrs|
           field = resolve_field(attrs)
+          next if field.nil?
           next let_go(field, attrs) if field.has_many
           next let_go(field, attrs) if attrs[:id].present?
           desperados.push([attrs, field])
