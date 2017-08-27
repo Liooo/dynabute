@@ -1,6 +1,16 @@
 module Dynabute
   class Util
     class << self
+      def nested_attributable_presence_validator(id_attr, id_relation_accessor, halt: false)
+        return -> {
+          attr = id_attr.to_sym
+          if (persisted? && self[attr].nil?) || (new_record? && send(id_relation_accessor).nil?)
+            errors[attr] << I18n.t('errors.messages.blank')
+            return fail(:abort) if(halt)
+          end
+        }
+      end
+
       def table_name_prefix
         'dynabute_'
       end
