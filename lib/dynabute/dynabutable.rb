@@ -45,9 +45,9 @@ module Dynabute
         end
       end
 
-      def build_dynabute_value(name: nil, id: nil, field: nil)
+      def build_dynabute_value(name: nil, id: nil, field: nil, **rest)
         field = find_field(name, id, field)
-        send(Util.value_relation_name(field.value_type)).build(field_id: field.id)
+        send(Util.value_relation_name(field.value_type)).build(field_id: field.id, **rest)
       end
 
       def method_missing(*args)
