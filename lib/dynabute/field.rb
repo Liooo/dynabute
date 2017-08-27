@@ -13,12 +13,8 @@ module Dynabute
     scope :for, ->(klass){ where(target_model: klass) }
     has_many :options, class_name: 'Dynabute::Option', dependent: :destroy
     accepts_nested_attributes_for :options, allow_destroy: true
-    def is_select?
-      ['select'].include? value_type
-    end
 
     def value_class
-      type = is_select? ? :integer : value_type
       Util.value_class_name(type).safe_constantize
     end
 

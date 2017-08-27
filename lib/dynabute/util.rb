@@ -6,14 +6,11 @@ module Dynabute
       end
 
       def value_class_name(type)
-        name = %i(select).include?(type.to_sym) ? :integer : type
-        "Dynabute::Values::#{name.to_s.classify}Value"
+        "Dynabute::Values::#{type.to_s.classify}Value"
       end
 
       def value_relation_name(type)
-        %i(select).include?(type.to_sym) ?
-          :integer_values :
-          "#{type}_values".to_sym
+        "#{type}_values".to_sym
       end
 
       def all_value_relation_names
