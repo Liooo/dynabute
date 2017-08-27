@@ -13,9 +13,9 @@ module Dynabute
     accepts_nested_attributes_for :options, allow_destroy: true
 
     scope :for, ->(klass){ where(target_model: klass) }
-    
+
     def value_class
-      Util.value_class_name(type).safe_constantize
+      Util.value_class_name(value_type).safe_constantize
     end
 
     def self.<<(records)
