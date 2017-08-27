@@ -29,8 +29,8 @@ module Dynabute
 
       def dynabute_values
         @dynabute_values ||= dynabute_fields
-                               .group_by{|f| f.value_type}
-                               .map { |type, fields|
+                               .group_by{|f| f.value_type }
+                               .map { |_, fields|
                                  fields.first.value_class.where(field_id: fields.map(&:id), dynabutable_id: id)
                                }.flatten.compact
       end
