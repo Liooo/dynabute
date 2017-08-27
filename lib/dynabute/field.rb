@@ -7,13 +7,13 @@ module Dynabute
     def self.table_name_prefix; Util.table_name_prefix; end
     TYPES = %w(string integer boolean datetime select)
     validates :value_type, inclusion: {in: TYPES}
-    validates_presence_of :name
-    validates :name, uniqueness: { scope: :target_model }
+    validates :name, presence: true, uniqueness: { scope: :target_model }
     validates_presence_of :target_model
-    scope :for, ->(klass){ where(target_model: klass) }
     has_many :options, class_name: 'Dynabute::Option', dependent: :destroy
     accepts_nested_attributes_for :options, allow_destroy: true
 
+    scope :for, ->(klass){ where(target_model: klass) }
+    
     def value_class
       Util.value_class_name(type).safe_constantize
     end
