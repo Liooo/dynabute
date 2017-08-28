@@ -42,7 +42,7 @@ module Dynabute
 
       private
       def resolve_field(attrs)
-        @field_list.detect{|f| f.name == attrs[:name] || f.id == attrs[:field_id]}
+        @field_list.detect{|f| f.name == attrs[:name].to_s || f.id == attrs[:field_id].to_i}
       end
 
       def collect_fields(attrs)

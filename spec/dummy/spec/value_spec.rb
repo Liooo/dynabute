@@ -92,7 +92,7 @@ RSpec.describe Dynabute::Values, type: :model do
       let!(:user) { User.create(name: 'hello') }
       let!(:int_field) { Dynabute::Field.create(name: 'int field', value_type: :integer, target_model: 'User') }
 
-      context 'given string keyed hash' do
+      context 'given symbol keyed hash' do
         let!(:attrs) { {dynabute_values_attributes: [ {field_id: int_field.id, value: 1}, ]} }
         it 'creates new record' do
           expect{ user.update!(attrs) }.to change{
@@ -103,6 +103,24 @@ RSpec.describe Dynabute::Values, type: :model do
 
       context 'given string keyed hash' do
         let!(:attrs) { {'dynabute_values_attributes' => [ {'field_id' => int_field.id, 'value' => 1}, ]} }
+        it 'creates new record' do
+          expect{ user.update!(attrs) }.to change{
+            Dynabute::Values::IntegerValue.where(dynabutable_id: user.id, field_id: int_field.id, value: 1).count
+          }.from(0).to(1)
+        end
+      end
+
+      context 'given string field_id' do
+        let!(:attrs) { {'dynabute_values_attributes' => [ {'field_id' => int_field.id.to_s, 'value' => 1}, ]} }
+        it 'creates new record' do
+          expect{ user.update!(attrs) }.to change{
+            Dynabute::Values::IntegerValue.where(dynabutable_id: user.id, field_id: int_field.id, value: 1).count
+          }.from(0).to(1)
+        end
+      end
+
+      context 'given symbol name' do
+        let!(:attrs) { {'dynabute_values_attributes' => [ {'name' => int_field.name.to_sym, 'value' => 1}, ]} }
         it 'creates new record' do
           expect{ user.update!(attrs) }.to change{
             Dynabute::Values::IntegerValue.where(dynabutable_id: user.id, field_id: int_field.id, value: 1).count
