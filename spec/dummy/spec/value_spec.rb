@@ -36,7 +36,7 @@ RSpec.describe Dynabute::Values, type: :model do
             expect(user.dynabute_value(field: int_field).try(:value)).to eq(1)
           end
         end
-        
+
         context 'when value record exists' do
           let!(:value) { Dynabute::Values::IntegerValue.create(dynabutable_id: user.id, dynabutable_type: 'User', field_id: int_field.id, value: 1)}
           it 'returns value' do
@@ -87,6 +87,29 @@ RSpec.describe Dynabute::Values, type: :model do
   end
 
   describe 'nested attributes' do
+
+    describe 'indifferent accessed hash' do
+      let!(:user) { User.create(name: 'hello') }
+      let!(:int_field) { Dynabute::Field.create(name: 'int field', value_type: :integer, target_model: 'User') }
+
+      context 'given string keyed hash' do
+        let!(:attrs) { {dynabute_values_attributes: [ {field_id: int_field.id, value: 1}, ]} }
+        it 'creates new record' do
+          expect{ user.update!(attrs) }.to change{
+            Dynabute::Values::IntegerValue.where(dynabutable_id: user.id, field_id: int_field.id, value: 1).count
+          }.from(0).to(1)
+        end
+      end
+
+      context 'given string keyed hash' do
+        let!(:attrs) { {'dynabute_values_attributes' => [ {'field_id' => int_field.id, 'value' => 1}, ]} }
+        it 'creates new record' do
+          expect{ user.update!(attrs) }.to change{
+            Dynabute::Values::IntegerValue.where(dynabutable_id: user.id, field_id: int_field.id, value: 1).count
+          }.from(0).to(1)
+        end
+      end
+    end
 
     describe 'has one' do
       let!(:user) { User.create(name: 'hello') }

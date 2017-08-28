@@ -5,7 +5,7 @@ module Dynabute
     class FieldNotSpecified < StandardError; end
     class Builder
       def initialize(attributes_list, dynabutee)
-        @attributes_list = attributes_list
+        @attributes_list = attributes_list.map{ |a| a.with_indifferent_access }
         @nested_attributes_to_assign = {}
         @dynabutee = dynabutee
       end
