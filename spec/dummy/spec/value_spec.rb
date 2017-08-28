@@ -11,8 +11,32 @@ RSpec.describe Dynabute::Values, type: :model do
       it { expect{ user.dynabute_unregistered_field_name_value }.to raise_error(NoMethodError) }
     end
 
+    describe '#build_dynabute_value' do
+      context 'has one' do
+        subject { user.build_dynabute_value(field_id: int_field.id, value: 3) }
+        it 'can build' do
+          expect(subject).to be_a Dynabute::Values::IntegerValue
+          expect(subject.new_record?).to eq(true)
+          expect(subject.slice(:id, :field_id, :dynabutable_type, :value)).to eq({'id' => nil, 'field_id' => int_field.id, 'dynabutable_type' => 'User', 'value' => 3})
+        end
+      end
+    end
+
     describe '#dynabute_value' do
       context 'has one' do
+        context 'finding values' do
+          let!(:value) { Dynabute::Values::IntegerValue.create(dynabutable_id: user.id, dynabutable_type: 'User', field_id: int_field.id, value: 1)}
+          it 'can find by field_id' do
+            expect(user.dynabute_value(field_id: int_field.id).try(:value)).to eq(1)
+          end
+          it 'can find by name' do
+            expect(user.dynabute_value(name: int_field.name).try(:value)).to eq(1)
+          end
+          it 'can find by field' do
+            expect(user.dynabute_value(field: int_field).try(:value)).to eq(1)
+          end
+        end
+        
         context 'when value record exists' do
           let!(:value) { Dynabute::Values::IntegerValue.create(dynabutable_id: user.id, dynabutable_type: 'User', field_id: int_field.id, value: 1)}
           it 'returns value' do

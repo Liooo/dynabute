@@ -35,8 +35,8 @@ module Dynabute
                                }.flatten.compact
       end
 
-      def dynabute_value(name: nil, id: nil, field: nil)
-        field = find_field(name, id, field)
+      def dynabute_value(name: nil, field_id: nil, field: nil)
+        field = find_field(name, field_id, field)
 
         if field.has_many
           send(Util.value_relation_name(field.value_type)).where(field_id: field.id)
@@ -45,8 +45,8 @@ module Dynabute
         end
       end
 
-      def build_dynabute_value(name: nil, id: nil, field: nil, **rest)
-        field = find_field(name, id, field)
+      def build_dynabute_value(name: nil, field_id: nil, field: nil, **rest)
+        field = find_field(name, field_id, field)
         send(Util.value_relation_name(field.value_type)).build(field_id: field.id, **rest)
       end
 
