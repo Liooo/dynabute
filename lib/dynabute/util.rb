@@ -24,7 +24,7 @@ module Dynabute
       end
 
       def all_value_relation_names
-        Dynabute::Field::TYPES.map{|t| Util.value_relation_name(t).uniq }
+        Dynabute::Field::TYPES.map{|t| Util.value_relation_name(t) }
       end
     end
   end

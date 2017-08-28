@@ -16,6 +16,12 @@ RSpec.describe Dynabute, type: :model do
     end
   end
 
+  describe 'Model.dynabute_relation_names' do
+    it 'returns relations' do
+      expect(User.dynabute_relation_names).to eq(%i(string_values integer_values boolean_values datetime_values select_values))
+    end
+  end
+
   # describe 'joining' do
   #   let(:field1) { Dynabute::Field.create!(name: 'int field', value_type: :integer, target_model: 'User') }
   #   let(:field2) { Dynabute::Field.create!(name: 'int field2', value_type: :integer, target_model: 'User') }
