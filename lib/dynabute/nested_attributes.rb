@@ -5,7 +5,10 @@ module Dynabute
     class FieldNotSpecified < StandardError; end
     class Builder
       def initialize(attributes_list, dynabutee)
-        @attributes_list = attributes_list.map{ |a| a.with_indifferent_access }
+        unless attributes_list.is_a?(Hash) || attributes_list.is_a?(Array)
+          raise ArgumentError, "Hash or Array expected, got #{attributes_list.class.name} (#{attributes_list.inspect})"
+        end
+        @attributes_list = normalize_attributes(attributes_list)
         @nested_attributes_to_assign = {}
         @dynabutee = dynabutee
       end
@@ -41,6 +44,20 @@ module Dynabute
       end
 
       private
+
+      def normalize_attributes(attributes_list)
+        if attributes_list.is_a? Hash
+          attributes_array = if attributes_list.keys.all?{|k| k =~ /\A\d+\Z/}
+                              attributes_list.values
+                            else
+                              [attributes_list]
+                       end
+        else
+          attributes_array = attributes_list
+        end
+        attributes_array.map{ |a| a.with_indifferent_access }
+      end
+
       def resolve_field(attrs)
         @field_list.detect{|f| f.name == attrs[:name].to_s || f.id == attrs[:field_id].to_i}
       end
