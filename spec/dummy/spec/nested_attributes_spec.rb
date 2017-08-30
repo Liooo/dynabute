@@ -40,6 +40,25 @@ RSpec.describe Dynabute::NestedAttributes do
         }.from(0).to(1)
       end
     end
+
+    context 'single hash attribute' do
+      let!(:attrs) { {dynabute_values_attributes: {name: int_field.name.to_sym, value: 1} } }
+      it 'creates new record' do
+        expect{ user.update!(attrs) }.to change{
+          Dynabute::Values::IntegerValue.where(dynabutable_id: user.id, field_id: int_field.id, value: 1).count
+        }.from(0).to(1)
+      end
+    end
+
+    context 'hash with numeric keys' do
+      let!(:another_int_field) { Dynabute::Field.create(name: 'int field', value_type: :integer, target_model: 'User') }
+      let!(:attrs) { {'dynabute_values_attributes' => { '0' => {'name' => int_field.name.to_sym, 'value' => 1}, '1' => {'name' => another_int_field.name.to_sym, 'value' => 1}} } }
+      it 'handled as array' do
+        expect{ user.update!(attrs) }.to change{
+          Dynabute::Values::IntegerValue.where(dynabutable_id: user.id, field_id: int_field.id, value: 1).count
+        }.from(0).to(2)
+      end
+    end
   end
 
   describe 'has one' do
