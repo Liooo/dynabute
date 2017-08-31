@@ -1,6 +1,22 @@
 require './spec/dummy/spec/rails_helper'
 
 RSpec.describe Dynabute::Dynabutable, type: :model do
+  describe 'validation' do
+    context 'creating multiple values for has_one field' do
+      let!(:int_field) { Dynabute::Field.create(name: 'int field', value_type: :integer, target_model: 'User') }
+      let!(:user) { User.create }
+      before { user.build_dynabute_value(field_id: int_field.id, value: 1).save! }
+      it 'does not save' do
+        expect{ user.build_dynabute_value(field_id: int_field.id, value: 1).save }.to_not change{ Dynabute::Values::IntegerValue.count }
+      end
+      it 'adds error' do
+        value = user.build_dynabute_value(field_id: int_field.id, value: 1)
+        value.save
+        expect(value.errors[:base]).to be_present
+      end
+    end
+  end
+
   describe 'reading value' do
     let!(:int_field) { Dynabute::Field.create(name: 'int field', value_type: :integer, target_model: 'User') }
     let!(:user) { User.create }
