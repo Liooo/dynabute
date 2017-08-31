@@ -1,6 +1,12 @@
 require './spec/dummy/spec/rails_helper'
 
 RSpec.describe Dynabute, type: :model do
+  describe 'Model.value_types' do
+    it 'works' do
+      expect(Dynabute::Field.value_types).to eq(%w(string integer boolean datetime select))
+    end
+  end
+
   describe 'Model.dynabutes' do
     let(:field) { Dynabute::Field.create(name: 'int field', value_type: :integer, target_model: 'User') }
     it 'works' do

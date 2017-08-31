@@ -18,6 +18,10 @@ module Dynabute
       Util.value_class_name(value_type).safe_constantize
     end
 
+    def self.value_types
+      TYPES
+    end
+
     def self.<<(records)
       if records.respond_to? :each
         records.each {|r| r.update!(target_model: get_parent_class_name) }
