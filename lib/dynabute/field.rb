@@ -9,7 +9,7 @@ module Dynabute
     validates :value_type, inclusion: {in: TYPES}
     validates :name, presence: true, uniqueness: { scope: :target_model }
     validates_presence_of :target_model
-    has_many :options, class_name: 'Dynabute::Option', dependent: :destroy
+    has_many :options, class_name: 'Dynabute::Option', dependent: :destroy, inverse_of: 'field'
     accepts_nested_attributes_for :options, allow_destroy: true
 
     scope :for, ->(klass){ where(target_model: klass) }
