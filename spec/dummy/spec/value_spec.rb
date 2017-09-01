@@ -40,7 +40,7 @@ RSpec.describe Dynabute::Dynabutable, type: :model do
 
     describe '#dynabute_value' do
       context 'has one' do
-        context 'finding values' do
+        describe 'finding values' do
           let!(:value) { Dynabute::Values::IntegerValue.create(dynabutable_id: user.id, dynabutable_type: 'User', field_id: int_field.id, value: 1)}
           it 'can find by field_id' do
             expect(user.dynabute_value(field_id: int_field.id).try(:value)).to eq(1)
