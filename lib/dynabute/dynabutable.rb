@@ -39,9 +39,9 @@ module Dynabute
         field = find_field(name, field_id, field)
 
         if field.has_many
-          send(Util.value_relation_name(field.value_type)).where(field_id: field.id)
+          send(Util.value_relation_name(field.value_type)).select{|v| v.field_id == field.id }
         else
-          send(Util.value_relation_name(field.value_type)).find_by(field_id: field.id)
+          send(Util.value_relation_name(field.value_type)).detect{|v| v.field_id == field.id }
         end
       end
 

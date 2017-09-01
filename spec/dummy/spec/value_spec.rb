@@ -66,6 +66,14 @@ RSpec.describe Dynabute::Dynabutable, type: :model do
           end
         end
 
+        context 'when unsaved association exists' do
+          before { user.build_dynabute_value(field: int_field, value: 3) }
+          it 'returns the unsaved association' do
+            expect(user.dynabute_value(field: int_field).id).to be_nil
+            expect(user.dynabute_value(field: int_field).value).to eq(3)
+          end
+        end
+
         it 'raises Dynabute::FieldNoFoundError when field not found' do
           expect{ user.dynabute_value(name: 'I dont exist') }.to raise_error(Dynabute::FieldNotFound)
         end
@@ -77,15 +85,31 @@ RSpec.describe Dynabute::Dynabutable, type: :model do
           let!(:values) { 2.times.map { Dynabute::Values::IntegerValue.create!(dynabutable_id: user.id, dynabutable_type: 'User', field_id: int_many_field.id, value: 1) } }
           subject { user.dynabute_value(name: 'int many field') }
           it 'returns values' do
-            expect(subject).to be_a(ActiveRecord::AssociationRelation)
+            expect(subject).to be_a(Array)
             expect(subject.length).to eq(2)
           end
         end
         context 'when value record does not exist' do
           subject { user.dynabute_value(name: 'int many field') }
           it 'returns empty association' do
-            expect(subject).to be_a(ActiveRecord::AssociationRelation)
+            expect(subject).to be_a(Array)
             expect(subject.length).to eq(0)
+          end
+        end
+
+        context 'when unsaved association exists' do
+          before { user.build_dynabute_value(field: int_many_field, value: 3) }
+          it 'returns the unsaved association' do
+            expect(user.dynabute_value(field: int_many_field).length).to eq(1)
+            expect(user.dynabute_value(field: int_many_field).first.id).to be_nil
+            expect(user.dynabute_value(field: int_many_field).first.value).to eq(3)
+          end
+          context 'saved record also exists' do
+            let!(:existing_value){ Dynabute::Values::IntegerValue.create!(field_id: int_many_field.id, dynabutable_id: user.id, dynabutable_type: 'User', value: 1) }
+            it 'returns both saved and unsaved records' do
+              expect(user.dynabute_value(field: int_many_field).length).to eq(2)
+              expect(user.dynabute_value(field: int_many_field).map(&:id)).to include(existing_value.id, nil)
+            end
           end
         end
       end
