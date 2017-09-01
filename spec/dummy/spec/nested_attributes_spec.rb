@@ -1,8 +1,29 @@
 require './spec/dummy/spec/rails_helper'
 
 RSpec.describe Dynabute::NestedAttributes do
+  let!(:user) { User.create(name: 'hello') }
+
+  describe '_destroy' do
+    let!(:int_field) { Dynabute::Field.create!(name: 'int field', value_type: :integer, target_model: 'User', has_many: true) }
+    let!(:destroyed_int) { Dynabute::Values::IntegerValue.create!(dynabutable_type: 'User', dynabutable_id: user.id, field_id: int_field.id, value: 1) }
+    before { Dynabute::Values::IntegerValue.create!(dynabutable_type: 'User', dynabutable_id: user.id, field_id: int_field.id, value: 3) }
+    let!(:attrs) { {dynabute_values_attributes: [{field_id: int_field.id, id: destroyed_int.id, _destroy: true}]} }
+    it 'works' do
+      expect{ user.update!(attrs) }.to change{ Dynabute::Values::IntegerValue.count }.from(2).to(1)
+    end
+  end
+
+  context 'has params with empty value' do
+    let!(:int_field) { Dynabute::Field.create(name: 'int field', value_type: :integer, target_model: 'User') }
+    let!(:another_int_field) { Dynabute::Field.create(name: 'another int field', value_type: :integer, target_model: 'User') }
+    let!(:attrs) { {name: 'john', dynabute_values_attributes: [{field_id: int_field.id, value: 3}, {field_id: another_int_field.id, value: ''} ]} }
+    it 'rejects empty valued ones' do
+      user = User.new(attrs)
+      expect(user.dynabute_values.count).to eq(1)
+    end
+  end
+
   describe 'indifferent accessed hash' do
-    let!(:user) { User.create(name: 'hello') }
     let!(:int_field) { Dynabute::Field.create(name: 'int field', value_type: :integer, target_model: 'User') }
 
     context 'given symbol keyed hash' do
@@ -62,7 +83,6 @@ RSpec.describe Dynabute::NestedAttributes do
   end
 
   describe 'has one' do
-    let!(:user) { User.create(name: 'hello') }
     let!(:int_field) { Dynabute::Field.create(name: 'int field', value_type: :integer, target_model: 'User') }
 
     context 'value record do not exist' do
@@ -84,7 +104,6 @@ RSpec.describe Dynabute::NestedAttributes do
   end
 
   describe 'has many' do
-    let!(:user) { User.create(name: 'hello') }
     let!(:int_field) { Dynabute::Field.create!(name: 'int field', value_type: :integer, has_many: true, target_model: 'User') }
     context 'without id' do
       let!(:attrs) { {dynabute_values_attributes: [ {field_id: int_field.id, value: 1}, {field_id: int_field.id, value: 2}]} }

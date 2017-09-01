@@ -12,7 +12,7 @@ module Dynabute
 
       (Dynabute::Field::TYPES).each do |t|
         has_many Util.value_relation_name(t), class_name: Util.value_class_name(t), as: :dynabutable
-        accepts_nested_attributes_for Util.value_relation_name(t)
+        accepts_nested_attributes_for Util.value_relation_name(t), reject_if: proc{ |param| param[:value].blank? }, allow_destroy: true
       end
 
       def self.dynabutes
