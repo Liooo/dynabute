@@ -28,11 +28,11 @@ module Dynabute
       end
 
       def dynabute_values
-        @dynabute_values ||= dynabute_fields
-                               .group_by{|f| f.value_type }
-                               .map { |_, fields|
-                                 fields.first.value_class.where(field_id: fields.map(&:id), dynabutable_id: id)
-                               }.flatten.compact
+        dynabute_fields
+          .group_by{|f| f.value_type }
+          .map { |_, fields|
+            send(Util.value_relation_name(fields.first.value_type))
+          }.flatten.compact
       end
 
       def dynabute_value(name: nil, field_id: nil, field: nil)
