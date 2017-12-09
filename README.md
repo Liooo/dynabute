@@ -1,5 +1,7 @@
 # Dynabute
-Dynamically add attributes on Relational Database backed ActiveRecord, without hash serialization and bullshits
+Dynamically add attributes on Relational Database backed ActiveRecord, without hash serialization and bullshits.
+
+Try messing with a [working demo](https://dynabute-demo.herokuapp.com). 
 
 ## Usage
 
