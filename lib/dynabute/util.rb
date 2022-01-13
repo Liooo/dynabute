@@ -5,7 +5,7 @@ module Dynabute
         return -> {
           attr = id_attr.to_sym
           if (persisted? && self[attr].nil?) || (new_record? && send(id_relation_accessor).nil?)
-            errors[attr] << I18n.t('errors.messages.blank')
+            errors.add(attr, I18n.t('errors.messages.blank'))
             return fail(:abort) if(halt)
           end
         }
