@@ -21,7 +21,9 @@ Rails.application.configure do
       'Cache-Control' => "public, max-age=#{2.days.seconds.to_i}"
     }
   else
-    config.action_controller.perform_caching = false
+    # CI was failing with `NoMethodError: undefined method `perform_caching=' for ActionMailer::Base:Class`
+    # https://stackoverflow.com/a/53669026/1330926
+    # config.action_controller.perform_caching = false
 
     config.cache_store = :null_store
   end
