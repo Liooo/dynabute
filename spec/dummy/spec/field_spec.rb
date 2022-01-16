@@ -14,9 +14,9 @@ RSpec.describe Dynabute, type: :model do
     end
   end
 
-  describe 'Model.dynabutes <<' do
+  describe 'Model.dynabutes create' do
     it 'works' do
-      expect { User.dynabutes << Dynabute::Field.new(name: 'int field', value_type: :integer) }.to(
+      expect { User.dynabutes.create(name: 'int field', value_type: :integer) }.to(
         change{ Dynabute::Field.where(target_model: User.to_s).count }.from(0).to(1)
       )
     end

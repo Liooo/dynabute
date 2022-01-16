@@ -18,9 +18,9 @@ Gem::Specification.new do |s|
 
   s.add_runtime_dependency 'activerecord', ['>= 4.2.8']
 
-  s.add_development_dependency "rails"
+  s.add_development_dependency "rails", '~> 5'
   s.add_development_dependency "sqlite3"
   s.add_development_dependency "pry-byebug"
   s.add_development_dependency "pry-rails"
-  s.add_development_dependency "rspec-rails"
+  s.add_development_dependency "rspec-rails", '~> 5'
 end
