@@ -1,7 +1,7 @@
 # Dynabute
 Dynamically add attributes on Relational Database backed ActiveRecord, without hash serialization and bullshits.
 
-Try messing with a [working demo](https://dynabute-demo.herokuapp.com). 
+Try messing with a [working demo](https://dynabute-demo.herokuapp.com).
 
 ## Usage
 
@@ -14,9 +14,9 @@ end
 
 then add some field definitions
 ```ruby
-User.dynabutes << Dynabute::Field.new( name: 'age', value_type: 'integer' )
-User.dynabutes << Dynabute::Field.new( name: 'skinny', value_type: 'boolean' )
-User.dynabutes << Dynabute::Field.new( name: 'personalities', value_type: 'string', has_many: true )
+User.dynabutes.create( name: 'age', value_type: 'integer' )
+User.dynabutes.create( name: 'skinny', value_type: 'boolean' )
+User.dynabutes.create( name: 'personalities', value_type: 'string', has_many: true )
 ```
 
 now set value
@@ -52,13 +52,13 @@ user.update(
 )
 ```
 
-`select` value_type is also available 
+`select` value_type is also available
 ```ruby
-User.dynabutes << Dynabute::Field.new( name: 'gender', value_type: 'select', options_attributes: [ { label: 'male' }, { label: 'female' } ] )
-User.dynabutes << Dynabute::Field.new( name: 'hobbies', has_many: true, value_type: 'select',  options_attributes: [ { label: 'running' }, { label: 'swimming' }, { label: 'hiking' } ] )
+User.dynabutes.create( name: 'gender', value_type: 'select', options_attributes: [ { label: 'male' }, { label: 'female' } ] )
+User.dynabutes.create( name: 'hobbies', has_many: true, value_type: 'select',  options_attributes: [ { label: 'running' }, { label: 'swimming' }, { label: 'hiking' } ] )
 ```
 
-list the available options for a field 
+list the available options for a field
 ```ruby
 User.dynabutes.find_by(name: gender).options
 # => [#<Dynabute::Option:0x007ff53e2e1f90 id: 1, field_id: 4, label: "male">,
@@ -76,7 +76,7 @@ user.update(dynabute_values_attributes: [
  { name: 'hobbies', value: hobbies[1].id }
 ])
 ```
- 
+
 check out the selected options
 ```ruby
 user.dynabute_value(name: 'gender').option
@@ -86,7 +86,7 @@ user.dynabute_value(name: 'hobbies').map(&:option)
 # => [#<Dynabute::Option:0x007fb26c4467d8 id: 5, field_id: 5, label: "running">,
 #     #<Dynabute::Option:0x007fb26c446238 id: 6, field_id: 5, label: "swimming">]
 ```
- 
+
 ## Installation
 Add this line to your application's Gemfile:
 
