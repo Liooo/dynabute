@@ -21,7 +21,7 @@ module Dynabute::Values
       def reject_duplication_for_has_one
         return if field.has_many
         return unless self.class.exists?(field_id: field_id, dynabutable_id: dynabutable_id, dynabutable_type: dynabutable_type)
-        self.errors[:base] << 'Multiple records for has_one relationship detected'
+        self.errors.add(:base, 'Multiple records for has_one relationship detected')
         throw :abort
       end
     end
