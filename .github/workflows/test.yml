@@ -1,0 +1,33 @@
+name: test
+
+on:
+  pull_request:
+    branches:
+      - master
+  push:
+    branches:
+      - master
+
+env:
+  RUBY_VERSION: 2.7.2
+  RAILS_ENV: test
+
+jobs:
+  test:
+    name: run test
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v2
+      - name: setup Ruby
+        uses: ruby/setup-ruby@v1
+        with:
+          ruby-version: ${{ env.RUBY_VERSION }}
+          bundler-cache: true
+      - name: setup db
+        working-directory: spec/dummy
+        run: |
+          bundle exec rake db:create
+          bundle exec rake db:migrate
+      - name: Run RSpec
+        run: bundle exec rspec
