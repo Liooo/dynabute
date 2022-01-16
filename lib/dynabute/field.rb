@@ -22,15 +22,6 @@ module Dynabute
       TYPES
     end
 
-    def self.<<(records)
-      if records.respond_to? :each
-        records.each {|r| r.update!(target_model: get_parent_class_name) }
-      else
-        records.update!(target_model: get_parent_class_name)
-      end
-      all
-    end
-
     private
     def self.get_parent_class_name
       all.where_clause.binds.detect{|w| w.name == 'target_model'}.try(:value)
