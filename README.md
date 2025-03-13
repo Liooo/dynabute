@@ -23,29 +23,13 @@ now set value
 ```ruby
 user = User.create
 
-user.set_dynabute_value( name: 'age', value: 40 )
-# => #<Dynabute::Values::StringValue:0x0000 ... dynabutable_type: "User", value: 40>
-user.set_dynabute_value( name: 'skinny', value: true )
-# => #<Dynabute::Values::StringValue:0x0000 ... dynabutable_type: "User", value: true>
-user.save
-# => true
-
-# or update single value
 user.set_dynabute_value( name: 'age', value: 35 ).save
 # => true
 ```
 
 check the value
 ```ruby
-user.get_dynabute_value(name: 'age')
-# => 35
-```
-
-or check entire value object
-```ruby
-value_obj = user.dynabute_value( name: 'age' )
-# => #<Dynabute::Values::StringValue:0x0000 ... dynabutable_type: "User", value: 35>
-value_obj.value
+user.dynabute_value( name: 'age' ).value
 # => 35
 ```
 
@@ -53,75 +37,6 @@ values can also be referenced by `dynabute_<field name>_value(s)`
 ```ruby
 user.dynabute_age_value.value
 # => 35
-```
-
-set values for fields which can contain more than one value
-```ruby
-user = User.create
-
-user.set_dynabute_value( name: 'personalities', value: 'good' )
-# => #<Dynabute::Values::StringValue:0x0000 ... dynabutable_type: "User", value: "good">
-user.set_dynabute_value( name: 'personalities', value: 'bad' )
-# => #<Dynabute::Values::StringValue:0x0000 ... dynabutable_type: "User", value: "bad">
-user.set_dynabute_value( name: 'personalities', value: 'ugly' )
-# => #<Dynabute::Values::StringValue:0x0000 ... dynabutable_type: "User", value: "ugly">
-user.save
-# => true
-```
-
-get values for fields which can contain more than one value
-```ruby
-user = User.first
-
-user.get_dynabute_value( name: 'personalities' )
-# => ["good", "bad", "ugly"]
-
-user.dynabute_value( name: 'personalities' )
-# => [#<Dynabute::Values::StringValue:0x0000 ... dynabutable_type: "User", value: "good">,
-#     #<Dynabute::Values::StringValue:0x0000 ... dynabutable_type: "User", value: "bad">,
-#     #<Dynabute::Values::StringValue:0x0000 ... dynabutable_type: "User", value: "ugly">]
-```
-
-update specific value for field with `has_many` option
-```ruby
-user = User.first
-
-values_obj = user.dynabute_value( name: 'personalities' )
-# => [#<Dynabute::Values::StringValue:0x0000 ... dynabutable_type: "User", value: "good">,
-#     #<Dynabute::Values::StringValue:0x0000 ... dynabutable_type: "User", value: "bad">,
-#     #<Dynabute::Values::StringValue:0x0000 ... dynabutable_type: "User", value: "ugly">]
-good_value_obj = values_obj.first
-# => #<Dynabute::Values::StringValue:0x0000 ... dynabutable_type: "User", value: "good">
-bad_value_obj = values_obj.last
-# => #<Dynabute::Values::StringValue:0x0000 ... dynabutable_type: "User", value: "ugly">
-user.set_dynabute_value( name: 'personalities', value: 'very good', value_id: good_value_obj.id )
-# => #<Dynabute::Values::StringValue:0x0000 ... dynabutable_type: "User", value: "very good">
-user.set_dynabute_value( name: 'personalities', value: 'very ugly', value_id: bad_value_obj.id )
-# => #<Dynabute::Values::StringValue:0x0000 ... dynabutable_type: "User", value: "very ugly">
-user.save
-# => true
-
-# in case all changes are not required to be saved within db transaction,
-# each value can be saved separately.
-good_value_obj.value = 'very very good'
-# => "very very good"
-good_value_obj.save
-```
-
-remove value
-```ruby
-user = User.first
-
-user.remove_dynabute_value( name: 'age' )
-# => #<Dynabute::Values::StringValue:0x0000 ... dynabutable_type: "User", value: 35>
-
-value_obj = user.dynabute_value( name: 'personalities' ).first
-user.remove_dynabute_value( name: 'personalities', value_id: value_obj.id )
-# => #<Dynabute::Values::StringValue:0x0000 ... dynabutable_type: "User", value: "good">
-
-user.remove_dynabute_value( name: 'personalities' )
-# => [#<Dynabute::Values::StringValue:0x0000 ... dynabutable_type: "User", value: "bad">,
-#     #<Dynabute::Values::StringValue:0x0000 ... dynabutable_type: "User", value: "ugly">]
 ```
 
 nested attributes of glory
@@ -172,6 +87,15 @@ user.dynabute_value(name: 'hobbies').map(&:option)
 #     #<Dynabute::Option:0x007fb26c446238 id: 6, field_id: 5, label: "swimming">]
 ```
 
+remove value
+
+```
+user.remove_dynabute_value(name: 'age')
+# => #<Dynabute::Values::StringValue:0x0000 ... dynabutable_type: "User", value: 35>
+```
+
+
+
 ## Installation
 Add this line to your application's Gemfile:
 
@@ -185,6 +109,9 @@ $ bundle install
 $ rails generate dynabute:install
 $ rake db:migrate
 ```
+## Contributors
+
+[<img src="https://github.com/CrAsH1101.png" width="60px;"/><br /><sub><a href="https://github.com/CrAsH1101">CrAsH1101</a></sub>](https://github.com/CrAsH1101)
 
 ## Contributing
 
@@ -198,7 +125,6 @@ $ cd ../../
 $ bundle exec rspec
 ```
 
-yea?
 
 ## License
 The gem is available as open source under the terms of the [MIT License](http://opensource.org/licenses/MIT).
