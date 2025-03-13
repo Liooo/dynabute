@@ -23,8 +23,8 @@ now set value
 ```ruby
 user = User.create
 
-user.build_dynabute_value( name: 'age', value: 35 ).save
-# => <Dynabute::Values::IntegerValue:0x007faba5279540 id: 1, field_id: 1, dynabutable_id: 1, dynabutable_type: "User", value: 35>
+user.set_dynabute_value( name: 'age', value: 35 ).save
+# => true
 ```
 
 check the value
@@ -87,6 +87,15 @@ user.dynabute_value(name: 'hobbies').map(&:option)
 #     #<Dynabute::Option:0x007fb26c446238 id: 6, field_id: 5, label: "swimming">]
 ```
 
+remove value
+
+```
+user.remove_dynabute_value(name: 'age')
+# => #<Dynabute::Values::StringValue:0x0000 ... dynabutable_type: "User", value: 35>
+```
+
+
+
 ## Installation
 Add this line to your application's Gemfile:
 
@@ -100,9 +109,22 @@ $ bundle install
 $ rails generate dynabute:install
 $ rake db:migrate
 ```
+## Contributors
+
+[<img src="https://github.com/CrAsH1101.png" width="60px;"/><br /><sub><a href="https://github.com/CrAsH1101">CrAsH1101</a></sub>](https://github.com/CrAsH1101)
 
 ## Contributing
-yea?
+
+#### Rspec: set test environment
+```bash
+$ bundle install
+$ cd spec/dummy/
+$ RAILS_ENV=test bundle exec rake db:create
+$ RAILS_ENV=test bundle exec rake db:migrate
+$ cd ../../
+$ bundle exec rspec
+```
+
 
 ## License
 The gem is available as open source under the terms of the [MIT License](http://opensource.org/licenses/MIT).
